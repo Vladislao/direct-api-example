@@ -1,0 +1,41 @@
+extends layout
+
+block content
+    .container
+        .navbar(ng-controller="NavbarController")
+            .navbar-inner
+                a.brand(href='#/') Yandex.Direct:API
+                ul.nav
+                    if authenticated
+                        li
+                            div.dropdown(ng-controller="CampaignsController")
+                                button.btn.dropdown-toggle {{campaigns.current.Name || 'Выбрать кампанию'}}
+                                ul.dropdown-menu
+                                    li(ng-repeat="campaign in campaigns.all")
+                                        a(ng-click="setCurrent(campaign)") {{campaign.Name}}
+                //li
+                //    button(class="btn btn-mini btn-primary", ng-click="createReport()") Создать отчет
+                //li
+                //    button(class="btn btn-mini btn-primary", ng-click="showReports()") Скачать отчет
+                ul.nav.pull-right
+                    if authenticated
+                        li
+                            div.dropdown
+                                button.btn.dropdown-toggle {{typeService.type.Text}}
+                                ul.dropdown-menu
+                                    li(ng-repeat="type in typeService.types")
+                                        a(ng-click="setType(type)") {{type.Text}}
+                        li
+                            a(href='/auth/logout') Выход
+                    else
+                        li
+                            a(href='/auth/yandex') Вход
+        if authenticated
+            div(ng-view)
+        else
+            .hero-unit.pagination-centered
+                p
+                    a(href='/auth/yandex') click
+
+
+

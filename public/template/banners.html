@@ -1,0 +1,47 @@
+<div ng-show="campaigns.current">
+    <div class="row" ng-init="init()">
+        <div class="span4"><strong>Текст объявления</strong></div>
+        <div class="span3"><strong>Поисковые фразы</strong></div>
+        <div class="span1"><strong><a href="" ng-click="sortBy('Shows')">Показы</a></strong></div>
+        <div class="span1"><strong><a href="" ng-click="sortBy('Clicks')">Клики</a></strong></div>
+        <div class="span1"><strong><a href="" ng-click="sortBy(typeService.type.Field + 'CTR')">CTR</a></strong></div>
+        <div class="span1"><strong>Расход</strong></div>
+        <div class="span1"><strong><a href="" ng-click="sortBy(typeService.type.Field + 'Clicks')">Средняя цена за клик</a></strong>
+        </div>
+    </div>
+    <hr/>
+    <div ng-repeat="banner in banners.all">
+        <div class="row">
+            <div class="span4">
+                <strong><a ng-href="{{'http://' + banner.Href}}">{{banner.Title}}</a></strong>
+
+                <p>
+                    <small>{{banner.Text}}</small>
+                </p>
+            </div>
+            <div class="span8" ng-include src="'template/phrases.html'">
+            </div>
+        </div>
+        <hr/>
+    </div>
+    <div ng-show="banners.all && banners.all[0].forecast" class="row">
+        <div class="span7"><strong>Суммарно: </strong></div>
+        <div class="span1"><strong>{{forecasts.one.Common.Shows}}</strong></div>
+        <div class="span2"><strong>{{forecasts.one.Common.Clicks}}</strong></div>
+        <div class="span1"><strong>{{getTotalCost()}}</strong></div>
+        <div class="span1"><strong>{{forecasts.one.Common[typeService.type.Field + "Clicks"]}}</strong></div>
+    </div>
+    <div class="fat"></div>
+</div>
+<div ng-controller="CampaignsController" class="hero-unit pagination-centered" ng-show="campaigns.current == undefined">
+    <div class="inline-center dropdown">
+        <p class="dropdown-toggle">
+            <a href="/">click</a>
+        </p>
+        <ul class="dropdown-menu">
+            <li ng-repeat="campaign in campaigns.all">
+                <a ng-click="setCurrent(campaign)">{{campaign.Name}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
