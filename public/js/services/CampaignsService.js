@@ -9,38 +9,52 @@
  */
 direct.factory('campaignsService', function ($http, $q) {
 
+    // data
     var campaigns = [];
     var current;
 
-    var deferred = $q.defer();
+    // deferred
+    var deferredCampaignsList = $q.defer();
 
-    $http.post('/api/', {
-        "method": "GetCampaignsList",
-        "locale": "ru"
-    })
-        .success(function(data, response){
-            campaigns = data.data;
-            deferred.resolve(campaigns);
+    // functions
+    function GetCampaignsList() {
+        return $http.post('/api/', {
+            "method": "GetCampaignsList",
+            "locale": "ru"
         });
-
-    function get(){
-        return deferred.promise;
     }
 
+    // resolve once (update)
+    function ResolveOnce(){
+        GetCampaignsList().then(function (data) {
+            campaigns = data.data.data;
+            deferredCampaignsList.resolve(campaigns);
+        });
+    }
+
+    // resolvers
+    function CampaignsListResolver(){
+        return deferredCampaignsList.promise;
+    }
+
+    ResolveOnce();
     return {
-        get: get,
+        get: CampaignsListResolver,
         current: current
     }
 });
 
-direct.factory('typeService', function ($http, $q) {
-    var types = [{
-        "Text": "Спецразмещение",
-        "Field":"Premium"
-    },{
-        "Text": "1-ое место",
-        "Field":"FirstPlace"
-    }];
+direct.factory('typeService', function () {
+    var types = [
+        {
+            "Text": "Спецразмещение",
+            "Field": "Premium"
+        },
+        {
+            "Text": "1-ое место",
+            "Field": "FirstPlace"
+        }
+    ];
     var type = types[0];
 
     return {

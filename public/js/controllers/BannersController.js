@@ -11,42 +11,40 @@ direct.controller('BannersController',
         $scope.forecasts = forecastsService;
         $scope.typeService = typeService;
 
-        function RetrieveForecast() {
-            forecastsService.get().then(function (data) {
-                $scope.forecasts.one = data;
-                var clone = data.Phrases.slice(0);
-                for (var i = 0; i < $scope.banners.all.length; i++) {
-                    $scope.banners.all[i].forecast = clone.splice(0, $scope.banners.all[i].Phrases.length);
-                }
-            });
+        function SetForecast(data) {
+            $scope.forecasts.one = data;
+            var clone = data.Phrases.slice(0);
+            for (var i = 0; i < $scope.banners.all.length; i++) {
+                $scope.banners.all[i].forecast = clone.splice(0, $scope.banners.all[i].Phrases.length);
+            }
         }
 
-        function CheckForecast() {
-            $timeout(function () {
-                forecastsService.check()
-                    .then(function () {
-                        RetrieveForecast();
-                    }, function () {
-                        CheckForecast();
-                    });
-            }, 5000);
+        function GetBanners(campaignId) {
+            return bannersService.get([campaignId])
+                .then(function (banners) {
+                    $scope.banners.all = banners;
+                    return banners;
+                });
+        }
+
+        function ExtractPhrases(banners) {
+            var phrases = [];
+            for (var i = 0; i < banners.length; i++) {
+                var p = banners[i].Phrases;
+                for (var j = 0; j < p.length; j++) {
+                    phrases.push(p[j].Phrase);
+                }
+            }
+            return phrases;
         }
 
         $scope.$watch('campaigns.current', function (newValue, oldValue) {
             if (newValue) {
-                bannersService.get([newValue.CampaignID]).then(function (response) {
-                    $scope.banners.all = response;
-                })
-                    .then(function () {
-                        var phrases = [];
-                        for (var i = 0; i < $scope.banners.all.length; i++) {
-                            var p = $scope.banners.all[i].Phrases;
-                            for (var j = 0; j < p.length; j++) {
-                                phrases.push(p[j].Phrase);
-                            }
-                        }
-                        forecastsService.create(phrases).then(function () {
-                            CheckForecast();
+                GetBanners(newValue.CampaignID)
+                    .then(function (banners) {
+                        var phrases = ExtractPhrases(banners);
+                        forecastsService.create(phrases).then(function (forecast) {
+                            SetForecast(forecast);
                         });
                     });
             }
@@ -93,16 +91,15 @@ direct.controller('BannersController',
 
         var filter = $scope.filter = {
             "sortBy": "",
-            "sortAsc": true
+            "sortAsc": false
         };
 
-        $scope.getTotalCost = function(){
-            if($scope.forecasts.one == undefined){
+        $scope.getTotalCost = function () {
+            if ($scope.forecasts.one == undefined) {
                 return 0;
             }
             var sum = 0;
-            for(var i = 0; i < $scope.forecasts.one.Phrases.length; i++)
-            {
+            for (var i = 0; i < $scope.forecasts.one.Phrases.length; i++) {
                 var phrase = $scope.forecasts.one.Phrases[i];
                 sum += phrase.Clicks * phrase[typeService.type.Field + "Clicks"];
             }
