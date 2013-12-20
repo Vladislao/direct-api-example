@@ -48,11 +48,13 @@ direct.factory('typeService', function () {
     var types = [
         {
             "Text": "Спецразмещение",
-            "Field": "Premium"
+            "Field": "Premium",
+            "Price": "Premium"
         },
         {
-            "Text": "1-ое место",
-            "Field": "FirstPlace"
+            "Text": "Нижний блок",
+            "Field": "FirstPlace",
+            "Price": ""
         }
     ];
     var type = types[0];

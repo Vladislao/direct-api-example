@@ -1,10 +1,10 @@
 <div ng-repeat="phrase in banner.forecast" class="row">
     <div class="span3">{{phrase.Phrase}}</div>
     <div class="span1">{{phrase.Shows}}</div>
-    <div class="span1">{{phrase.Clicks}}</div>
-    <div class="span1">{{phrase[typeService.type.Field + "CTR"]}}</div>
-    <div class="span1">{{phrase[typeService.type.Field + "Clicks"] * phrase.Clicks}}</div>
     <div class="span1">{{phrase[typeService.type.Field + "Clicks"]}}</div>
+    <div class="span1">{{phrase[typeService.type.Field + "CTR"]}}</div>
+    <div class="span1">{{phrase[typeService.type.Price + "Max"] * phrase[typeService.type.Field + "Clicks"] | number:2 }}</div>
+    <div class="span1">{{phrase[typeService.type.Price + "Max"]}}</div>
 </div>
 <div ng-show="banner.forecast == undefined" class="row">
     <p>Загрузка... <small class="pull-right">can take forever</small></p>

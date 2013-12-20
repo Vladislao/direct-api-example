@@ -38,8 +38,12 @@ direct.factory('bannersService', function ($http, $q) {
     // resolvers
     function BannersStatResolver(campaign, start, end){
         return GetBannersStat(campaign, start, end).then(function(data){
-            bannerStats = data.data.data;
-            return bannerStats;
+            if(data.data.data){
+                bannerStats = data.data.data;
+                return bannerStats;
+            } else {
+                return null;
+            }
         });
     }
 

@@ -1,7 +1,3 @@
-/**
- * Created by Vlad on 12/7/13.
- */
-
 'use strict';
 
 /**

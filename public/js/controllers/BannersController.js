@@ -1,6 +1,3 @@
-/**
- * Created by Vlad on 12/7/13.
- */
 'use strict';
 
 direct.controller('BannersController',
@@ -10,6 +7,15 @@ direct.controller('BannersController',
         $scope.campaigns = campaignsService;
         $scope.forecasts = forecastsService;
         $scope.typeService = typeService;
+
+        var filter = $scope.filter = {
+            "sortBy": "",
+            "sortAsc": false
+        };
+
+        function SetStats(data){
+            $scope.banners.stats = data;
+        }
 
         function SetForecast(data) {
             $scope.forecasts.one = data;
@@ -47,6 +53,9 @@ direct.controller('BannersController',
                             SetForecast(forecast);
                         });
                     });
+//                bannersService.getStat(newValue.CampaignID, "2013-12-05", "2013-12-11").then(function(stats){
+//                    SetStats(stats);
+//                });
             }
         });
 
@@ -89,11 +98,7 @@ direct.controller('BannersController',
             }
         }
 
-        var filter = $scope.filter = {
-            "sortBy": "",
-            "sortAsc": false
-        };
-
+        //phrase[typeService.type.Price + "Max"] * phrase[typeService.type.Field + "Clicks"]
         $scope.getTotalCost = function () {
             if ($scope.forecasts.one == undefined) {
                 return 0;
@@ -101,10 +106,22 @@ direct.controller('BannersController',
             var sum = 0;
             for (var i = 0; i < $scope.forecasts.one.Phrases.length; i++) {
                 var phrase = $scope.forecasts.one.Phrases[i];
-                sum += phrase.Clicks * phrase[typeService.type.Field + "Clicks"];
+                sum += phrase[typeService.type.Price + "Max"] * phrase[typeService.type.Field + "Clicks"];
             }
             return sum;
         };
+
+        $scope.getAvgClickCost = function(){
+            if ($scope.forecasts.one == undefined) {
+                return 0;
+            }
+            var sum = 0;
+            for (var i = 0; i < $scope.forecasts.one.Phrases.length; i++) {
+                var phrase = $scope.forecasts.one.Phrases[i];
+                sum += phrase[typeService.type.Price + 'Max'];
+            }
+            return sum / $scope.forecasts.one.Phrases.length;
+        }
 
         $scope.sortBy = function (key) {
             if (filter.sortBy === key) {
