@@ -32,7 +32,7 @@ passport.deserializeUser(function (obj, done) {
 passport.use(new YandexStrategy({
         clientID: config.YANDEX_CLIENT_ID,
         clientSecret: config.YANDEX_CLIENT_SECRET,
-        callbackURL: "http://direct-api-example.herokuapp.com/auth/yandex/callback"
+        callbackURL: config.YANDEX_CALLBACK
     },
     function (accessToken, refreshToken, profile, done) {
         // To keep the example simple, the user's Yandex profile is returned
